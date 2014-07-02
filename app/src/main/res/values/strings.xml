@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">AllarmeStrozzi</string>
+    <string name="enabled">Alarm Enabled</string>
+    <string name="service_label">Casa Strozzi Alarm</string>
+    <string name="action_settings">Settings</string>
+
+</resources>
