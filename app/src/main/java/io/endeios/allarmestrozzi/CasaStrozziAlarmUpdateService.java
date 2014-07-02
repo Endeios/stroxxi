@@ -1,6 +1,8 @@
 package io.endeios.allarmestrozzi;
 
 import android.app.IntentService;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
@@ -18,6 +20,8 @@ import org.springframework.web.client.RestTemplate;
 
 public class CasaStrozziAlarmUpdateService extends IntentService {
 
+    private Notification n = null;
+    private NotificationManager notificationManager;
     private RestTemplate restTemplate;
     private String url;
     private StrozziServiceBinder binder = new StrozziServiceBinder();
@@ -29,7 +33,6 @@ public class CasaStrozziAlarmUpdateService extends IntentService {
         restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
         url = "http://srvsvn/redmine/issues";
         url = "http://api.openweathermap.org/data/2.5/weather?q=London";
-
 
     }
 
@@ -52,6 +55,29 @@ public class CasaStrozziAlarmUpdateService extends IntentService {
 
     }
 
+    private void alarmOn(){
+        notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        n = new Notification.Builder(this)
+                .setContentTitle("CasaStrozzi")
+                .setContentText("L'allarme è acceso")
+                .setSmallIcon(R.drawable.ic_launcher)
+                .setAutoCancel(false).build();
+        n.flags = Notification.FLAG_ONGOING_EVENT;
+        notificationManager.cancelAll();
+        notificationManager.notify(0, n);
+    }
+    private void alarmOff(){
+        notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        n = new Notification.Builder(this)
+                .setContentTitle("CasaStrozzi")
+                .setContentText("L'allarme è Spento")
+                .setSmallIcon(R.drawable.ic_launcher)
+                .setAutoCancel(false).build();
+        n.flags = Notification.FLAG_ONGOING_EVENT;
+        notificationManager.cancelAll();
+        notificationManager.notify(0, n);
+    }
+
     private void getResult(Intent intent) {
         String result = restTemplate.getForObject(url, String.class, "Android");
         Log.i("Service", "Result is " + result);
@@ -59,6 +85,12 @@ public class CasaStrozziAlarmUpdateService extends IntentService {
             JSONObject obj = new JSONObject(result);
             Log.i("Service", "Object is " + obj);
             Bundle extras = intent.getExtras();
+            Integer londonId = (Integer) obj.get("id");
+            if(londonId.compareTo(6058560)==0){
+                alarmOn();
+            } else {
+                alarmOff();
+            }
             if(extras!=null){
                 Messenger messenger = (Messenger) extras.get(EXTRA_MESSENGER);
                 Message message = Message.obtain();
@@ -71,6 +103,12 @@ public class CasaStrozziAlarmUpdateService extends IntentService {
             e.printStackTrace();
         }
 
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        notificationManager.cancelAll();
     }
 
     public class StrozziServiceBinder extends Binder {

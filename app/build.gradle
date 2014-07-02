@@ -5,8 +5,8 @@ android {
     buildToolsVersion '20.0.0'
     defaultConfig {
         applicationId 'io.endeios.allarmestrozzi'
-        minSdkVersion 15
-        targetSdkVersion 15
+        minSdkVersion 16
+        targetSdkVersion 16
         versionCode 1
         versionName '1.0'
     }
@@ -32,8 +32,8 @@ repositories {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile "joda-time:joda-time:2.3"
-    compile "org.springframework.android:spring-android-core:1.0.1.RELEASE"
-    compile "org.springframework.android:spring-android-rest-template:1.0.1.RELEASE"
+    compile 'joda-time:joda-time:2.3'
+    compile 'org.springframework.android:spring-android-core:1.0.1.RELEASE'
+    compile 'org.springframework.android:spring-android-rest-template:1.0.1.RELEASE'
 }
 
